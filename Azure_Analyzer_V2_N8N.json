@@ -1,0 +1,787 @@
+{
+    "name": "Azure Analyzer V2",
+    "nodes": [
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "={{ $json.infrastructura }}",
+                "hasOutputParser": true,
+                "messages": {
+                    "messageValues": [
+                        {
+                            "message": "Te pasaran un listado de recursos, debes devolver el nombre de los resource groups en un listado. Es importante que no devuelvas nada mas que la lista de los nombres de resource groups porque seran utilizados como variables a posteriori por un interprete.\n\n\n"
+                        }
+                    ]
+                }
+            },
+            "type": "@n8n/n8n-nodes-langchain.chainLlm",
+            "typeVersion": 1.5,
+            "position": [
+                5060,
+                -400
+            ],
+            "id": "0829de9d-69cc-43b6-8cb6-e8f924a9463b",
+            "name": "Basic LLM Chain"
+        },
+        {
+            "parameters": {
+                "operation": "fromJson",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.extractFromFile",
+            "typeVersion": 1,
+            "position": [
+                4080,
+                -600
+            ],
+            "id": "78b1a903-9beb-4b92-9e86-4600d45eadd0",
+            "name": "Extract from File"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "4ff4418d-55b3-46f0-8b85-a248b791da62",
+                            "name": "companyName",
+                            "value": "={{ $('Edit Fields1').item.json['Compa\u00f1ia'] }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "4e9aec4f-783f-461d-887a-ffc8ee0c1fc1",
+                            "name": "Tipo de Assessment",
+                            "value": "={{ $('Edit Fields1').item.json['Tipo de Assessment'] }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "fe00daa4-0283-4014-a128-b24609665ff7",
+                            "name": "infrastructura",
+                            "value": "={{ $('Extract from File').item.json.data }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "9048a77b-62eb-4cf6-89dd-dd3325b208af",
+                            "name": "costes",
+                            "value": "={{ $json.data }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                4780,
+                -600
+            ],
+            "id": "b25cc45e-044c-4d0a-992c-2ef0a98bc9ea",
+            "name": "Edit Fields",
+            "onError": "continueRegularOutput"
+        },
+        {
+            "parameters": {
+                "html": "<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Informe de Azure - Econocom</title>\n<style>\n/* General Body Styling */\nbody { \n    font-family: 'Segoe UI', Arial, sans-serif; \n    margin: 20px auto; /* Centrar verticalmente y limitar horizontalmente */\n    max-width: 800px; /* Limitar el ancho m\u00e1ximo para parecer un documento */\n    background-color: #ffffff; /* Fondo blanco como un documento */\n    padding: 20px; /* Espaciado interno */\n    border-radius: 10px; /* Bordes redondeados */\n    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra para simular elevaci\u00f3n */\n    border: 1px solid #e1e1e1; /* L\u00ednea delgada alrededor del documento */\n    line-height: 1.6; /* Espaciado entre l\u00edneas */\n    color: #2b2b2b; /* Color de texto */\n}\n\nhtml { \n    background-image: url('https://xmple.com/wallpaper/azure-gradient-linear-3840x2160-c2-0066bb-072843-a-0-f-14.svg');\n    background-size: cover; /* Escalar la imagen para cubrir todo el fondo */\n    background-repeat: no-repeat; /* Evita que la imagen se repita */\n    background-position: center center; /* Centra la imagen */\n}\n/* Header Styling */\nh1 { \n    background-color: #0078d4; \n    color: #ffffff; \n    text-align: center; \n    padding: 20px 0; \n    font-size: 1.5rem; \n    text-transform: uppercase; \n    border-radius: 8px; \n    box-shadow: 0 4px 8px rgba(0,0,0,0.1); \n    margin-bottom: 20px; \n}\n\nh2 { \n    text-align: left; /* Alinear a la izquierda */\n    margin-left: 20px; /* Espaciado desde el borde */\n    color: #005a9e; /* Azul m\u00e1s oscuro para un toque elegante */\n    font-weight: bold; /* Resalta el t\u00edtulo */\n    border-bottom: 2px solid #0078d4; /* L\u00ednea decorativa debajo */\n    padding-bottom: 5px; /* Espaciado para la l\u00ednea decorativa */\n}\n\n/* Section Titles Styling */\nsection h2, section h3 {\n    text-align: left; /* Alinear a la izquierda */\n    margin-left: 20px; /* Espaciado desde el borde */\n    color: #005a9e; /* Azul m\u00e1s oscuro para un toque elegante */\n    font-weight: bold; /* Resalta el t\u00edtulo */\n    border-bottom: 2px solid #0078d4; /* L\u00ednea decorativa debajo */\n    padding-bottom: 5px; /* Espaciado para la l\u00ednea decorativa */\n}\n\n/* Table Styling */\ntable { \n    border-collapse: collapse; \n    width: 100%; \n    margin: 20px 0; \n    background-color: #ffffff; \n    box-shadow: 0 0 15px rgba(0,0,0,0.1); \n    border-radius: 8px; \n    overflow: hidden; \n}\n\ntable, th, td { \n    border: 1px solid #e1e1e1; \n}\n\nth { \n    background-color: #0078d4; \n    color: #ffffff; \n    text-transform: uppercase; \n    padding: 12px; \n    font-size: 1rem; \n    text-align: left; \n}\n\ntd { \n    padding: 10px; \n    font-size: 0.95rem; \n    color: #333; \n}\n\ntr:nth-child(even) { \n    background-color: #f3f6fb; \n}\n\ntr:hover { \n    background-color: #e6f7ff; \n    transition: 0.2s ease-in-out; \n}\n\n/* Bullet Point List Styling */\nul { \n    padding-left: 40px; \n}\n\nul li { \n    margin-bottom: 10px; \n    color: #2b2b2b; \n}\n\nul li strong { \n    color: #0078d4; \n}\n\np { \n    margin: 10px 0; \n    font-size: 1rem; \n    color: #2b2b2b; \n}\n\n/* Buttons (If Needed) */\nbutton { \n    background-color: #0078d4; \n    color: #ffffff; \n    border: none; \n    border-radius: 5px; \n    padding: 10px 20px; \n    font-size: 1rem; \n    cursor: pointer; \n    transition: background-color 0.3s ease; \n}\n\nbutton:hover { \n    background-color: #005a9e; \n}\n\nbutton:focus { \n    outline: none; \n    box-shadow: 0 0 0 2px #005a9e; \n}\n\n/* Links */\na { \n    color: #0078d4; \n    text-decoration: none; \n}\n\na:hover { \n    text-decoration: underline; \n}\n\n/* Card/Container Styling (if you need) */\n.container { \n    background-color: #ffffff; \n    padding: 20px; \n    border-radius: 8px; \n    box-shadow: 0 0 15px rgba(0,0,0,0.1); \n    margin: 20px 0; \n}\n\n/* Imagen centrada y al 50% */\nimg {\n    max-width: 100%; /* La imagen no exceder\u00e1 el ancho del contenedor */\n    height: auto; /* Mantiene la proporci\u00f3n original */\n    display: block; /* Asegura que respete el flujo de bloque */\n    margin: 0 auto; /* Centra las im\u00e1genes horizontalmente */\n}\n</style>\n</head>  \n{{ $json.text }}\n</html>\n"
+            },
+            "type": "n8n-nodes-base.html",
+            "typeVersion": 1.2,
+            "position": [
+                5480,
+                -600
+            ],
+            "id": "f3010f5e-f185-4309-9970-c42d4a428085",
+            "name": "HTML"
+        },
+        {
+            "parameters": {
+                "operation": "toText",
+                "sourceProperty": "html",
+                "options": {
+                    "fileName": "informe.txt"
+                }
+            },
+            "type": "n8n-nodes-base.convertToFile",
+            "typeVersion": 1.1,
+            "position": [
+                5820,
+                -600
+            ],
+            "id": "8b592968-2b57-4f00-b653-7566318baf30",
+            "name": "Convert to File"
+        },
+        {
+            "parameters": {
+                "resource": "file",
+                "path": "/mnt/informe2",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.ssh",
+            "typeVersion": 1,
+            "position": [
+                6180,
+                -600
+            ],
+            "id": "08a45313-4114-4734-a048-f9481c69e624",
+            "name": "SSH2",
+            "credentials": {
+                "sshPassword": {
+                    "id": "xxxxxxxxxxxxxxx",
+                    "name": "SSH Password account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "command": "mv informe.txt informe.html",
+                "cwd": "/mnt/informe2"
+            },
+            "type": "n8n-nodes-base.ssh",
+            "typeVersion": 1,
+            "position": [
+                6560,
+                -600
+            ],
+            "id": "5fd3a7d0-94b5-47ac-86a2-34547548616d",
+            "name": "SSH5",
+            "credentials": {
+                "sshPassword": {
+                    "id": "xxxxxxxxx",
+                    "name": "SSH Password account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "file",
+                "operation": "download",
+                "path": "/mnt/infra_report.json",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.ssh",
+            "typeVersion": 1,
+            "position": [
+                3860,
+                -600
+            ],
+            "id": "a68ca17e-a322-4526-8aaf-d77b4d91946c",
+            "name": "SSH1",
+            "credentials": {
+                "sshPassword": {
+                    "id": "xxxxxxxxxx",
+                    "name": "SSH Password account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "response",
+                "include": "allOtherFields",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.splitOut",
+            "typeVersion": 1,
+            "position": [
+                5480,
+                -400
+            ],
+            "id": "1a0758b3-3b8c-4bfc-a6d6-fed056b31555",
+            "name": "Split Out"
+        },
+        {
+            "parameters": {
+                "command": "=./azure_graph.sh {{ $json.response }}",
+                "cwd": "/mnt/"
+            },
+            "type": "n8n-nodes-base.ssh",
+            "typeVersion": 1,
+            "position": [
+                5820,
+                -400
+            ],
+            "id": "31a452d1-7551-4c9e-a4cb-7d3395f29374",
+            "name": "SSH6",
+            "credentials": {
+                "sshPassword": {
+                    "id": "xxxxxxxxxxxxxxxxxxx",
+                    "name": "SSH Password account"
+                }
+            },
+            "onError": "continueRegularOutput"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "=Eres un generador de informes que analiza azure. Te van a pasar una lista de recursos de azure con toda la informaci\u00f3n disponible. Es importante que realices un informe de analisis de infrastructura azure. Solo generas la parte body de un informe web, no generes nada mas, ni head, ni style.\n\nEs importante que hagas un analisis por tipologia de recurso. El analisis es para un assesment de azure as\u00ed que intenta por cada recurso recoger los maximos detalles posibles que te pasen. El informe tiene un titulo definido con la etiqueta html h1. El titulo es \"Assesment azure - Compa\u00f1ia {{ $json.companyName }}\". A partir de ahi todos los titulos de las demas secciones se definen con h2.\n\nEres un generador de informes de plataforma de azure, en este caso tienes que generar un informe de la compa\u00f1ia Econocom. El detalle del informe debe ser High. Muy importante no muestres los ID's de los recursos en el informe. Generas el apartado Body de un informe web, no generes nada mas que el apartado body ya que luego se incrustara en un html ya predifinido que ya tiene head y style.\n\nLa estructura del documento a realizar tendr\u00e1 los siguientes apartados numerados por este orden:\nindice\nintroducci\u00f3n\nan\u00e1lisis resource groups\nRecomendaciones Optimizaci\u00f3n\nCrear un apartado de analisis orientado a las siguientes tem\u00e1ticas: {{ $json['Tipo de Assessment'] }} (un apartado por cada tem\u00e1tica)\nAn\u00e1lisis de costes del \u00faltimo mes\nTabla de referencia con todos los objetos que se han encontrado en azure, resource group, tipo y descripcion\n\nCreame un indice al principio del informe para que al cargar la pagina web lo primero que aparezca es un indice que te permita ir a cualquier punto del informe. Es importante que este indice contenga todos los apartados del informe y que tenga una estructura clara y bonita.\n\nEn la introducci\u00f3n explica un breve resumen del documento y objetivos del mismo indicando la compa\u00f1ia, la cantidad de recursos totales y la tem\u00e1tica analizada.\n\nDivideme el analisis  por separado de cada resource group en la siguiente estructura.\n\nCarga una imagen que es el nombre del resource group .png que ya existe en el mismo directorio que el documento html. Despues de cargar esa imagen ofrece un resumen de lo que contiene el resource group.\n\nA partir de entonces debes generar la siguiente estructura de documentaci\u00f3n en un analisis mas detallado:\n\n\"virtual_machines\": Analiza las maquinas virtuales y da el maximo detalle de todos los recursos relacionados con la maquina virtual, asi como crea un resumen despues de listar la maquina virtual. En ese resumen explica con mucho detalle todas las propiedades de esa maquina virtual. Busca en los recursos catalogados como other_resources si hay algun recursos que pertenezca a maquinas virtuales, y en ese caso utiliza la informaci\u00f3n para detallar m\u00e1s esta secci\u00f3n. Si no existen recursos de este tipo en concreto no crees este apartado en la documentaci\u00f3n del resource group.\n\"aks_clusters\": Analiza los cluster de kubernetes y da el maximo detalle de todos los recursos relacionados con los cluster de kubernetes. Busca en los recursos catalogados como other_resources si hay algun recurso que pertenezca a cluster de kubernetes AKS, y en ese caso utiliza la informaci\u00f3n para detallar m\u00e1s esta secci\u00f3n. Si no existen recursos de este tipo en concreto no crees este apartado en la documentaci\u00f3n del resource group.\n\"web_apps\": Vas a recibir mucha informaci\u00f3n del app service, es importante que indiques de forma estructurada el maximo detalle del app service y da el maximo detalle de todos los recursos relacionados con los app services. Busca en los recursos catalogados como other_resources si hay algun recursos que pertenezcan al app service, y en ese caso utiliza la informaci\u00f3n para detallar m\u00e1s esta secci\u00f3n. Si no existen recursos de este tipo en concreto no crees este apartado en la documentaci\u00f3n del resource group.\n\"sql_servers\": Analiza los sql servers y da el maximo detalle de todos los recursos relacionados con los sql servers. Busca en los recursos catalogados como other_resources si hay algun recursos que pertenezca a servicio de sql server, y en ese caso utiliza la informaci\u00f3n para detallar m\u00e1s esta secci\u00f3n. Si no existen recursos de este tipo en concreto no crees este apartado en la documentaci\u00f3n del resource group.\n\"storage_accounts\": Analiza las cuentas de almacenamiento y da el maximo detalle de todos los recursos relacionados con las cuentas de almacenamiento. Busca en los recursos catalogados como other_resources si hay algun recursos que pertenezca a cuentas de almacenamiento, y en ese caso utiliza la informaci\u00f3n para detallar m\u00e1s esta secci\u00f3n. Si no existen recursos de este tipo en concreto no crees este apartado en la documentaci\u00f3n del resource group.\n\"other_resources\": Analiza el resto de recursos, identificalos y da el maximo detalle del resto de recursos. Estos recursos presentalos en formato de tabla. Si encuentras recursos que tras analizarlos puedan pertenecer a otra secci\u00f3n, hazlos aparecer en la secci\u00f3n correspondiente y no en \"other_resources\". Si no existen recursos de este tipo en concreto no crees este apartado en la documentaci\u00f3n del resource group.\n\nRecibilas la informaci\u00f3n de los recursos en la siguiente estructura\n\nResource group - Maquinas virtuales - Aks Clusters - Web apps (app services), sql servers, storage accounts, otros recursos.\n\nOfrece recomendaciones de optimizaci\u00f3n. \n\nEn los apartados del informe por tem\u00e1tica debes definir un analisis en profundidad teniendo en cuenta una tem\u00e1tica en concreto . Los tipos de estudios que te pueden pedir son:\n\nPRESALES, tienes que informar de todas aquellas informaciones que pueden ser interesantes para un preventa, as\u00ed como si se podria realizar alguna mejora u oferta sobre la plataforma. \n\nBACKUP, Tienes que analizar que ser\u00eda necesario para hacer un BACKUP de la plataforma actual. Ten en cuenta espacios, y realiza un estudio de como realizar el backup con el propio azure backup\n\nSTORAGE, Tienes que realizar una analisis a nivel de storage, viendo que tipologias de discos, espacios reservados tiene actualmente y buscar puntos de mejora sobre el entorno\n\nFINOPS, tienes que realizar un analisis de finops sobre la plataforma buscar todos aquellos puntos que puedan verse mejorados y que impacten positivamente sobre los costes y plantear alternativas.\n\nPara este estudio de ahora quiero que este \u00faltimo punto lo hagas de las tem\u00e1ticas {{ $json['Tipo de Assessment'] }} (un apartado por tem\u00e1tica)\n\nEl siguiente apartado es el analisis de costes del ultimo mes. Recibiras un extracto de los costes del \u00faltimo mes. En primer lugar debes hacer una tabla indicando los costes por servicio y el sumatorio total de coste del ultimo mes. En segundo lugar recomendaciones sobre los costes.\n\nPor \u00faltimo debes crear la tabla con todos los objetos que se han encontrado en azure, resource group, tipo y descripcion\n\nRecursos:\n{{ $json.infrastructura }}\n\nCostes del \u00faltimo mes:\n{{ $json.costes }}"
+            },
+            "type": "@n8n/n8n-nodes-langchain.chainLlm",
+            "typeVersion": 1.5,
+            "position": [
+                5060,
+                -600
+            ],
+            "id": "31e295d2-958c-41ee-aeb7-44ae3877ae69",
+            "name": "Basic LLM Chain1"
+        },
+        {
+            "parameters": {
+                "authentication": "basicAuth",
+                "formTitle": "Azure Assessment",
+                "formDescription": "Formulario de An\u00e1lisis de plataforma Azure",
+                "formFields": {
+                    "values": [
+                        {
+                            "fieldLabel": "Compa\u00f1ia",
+                            "requiredField": true
+                        },
+                        {
+                            "fieldLabel": "Tipo de Assessment",
+                            "fieldType": "dropdown",
+                            "fieldOptions": {
+                                "values": [
+                                    {
+                                        "option": "Presales"
+                                    },
+                                    {
+                                        "option": "Backup"
+                                    },
+                                    {
+                                        "option": "Storage"
+                                    },
+                                    {
+                                        "option": "Finops"
+                                    }
+                                ]
+                            },
+                            "multiselect": true,
+                            "requiredField": true
+                        },
+                        {
+                            "fieldLabel": "Tenant ID",
+                            "requiredField": true
+                        },
+                        {
+                            "fieldLabel": "Client ID",
+                            "requiredField": true
+                        },
+                        {
+                            "fieldLabel": "Client Secret",
+                            "requiredField": true
+                        },
+                        {
+                            "fieldLabel": "Subscription ID",
+                            "requiredField": true
+                        }
+                    ]
+                },
+                "responseMode": "lastNode",
+                "options": {
+                    "buttonLabel": "Lanzar Assessment",
+                    "respondWithOptions": {
+                        "values": {
+                            "respondWith": "redirect",
+                            "redirectUrl": "http://xxxxxxx:44999/informe2/informe.html"
+                        }
+                    }
+                }
+            },
+            "type": "n8n-nodes-base.formTrigger",
+            "typeVersion": 2.2,
+            "position": [
+                3060,
+                -600
+            ],
+            "id": "9200ea50-4bab-4a7c-8465-7ff324a99e84",
+            "name": "On form submission",
+            "webhookId": "9a909968-8fe8-4ca0-882f-3044c8c19457",
+            "credentials": {
+                "httpBasicAuth": {
+                    "id": "xxxxxxxxxxxxxxx",
+                    "name": "Unnamed credential 2"
+                }
+            }
+        },
+        {
+            "parameters": {},
+            "type": "n8n-nodes-base.noOp",
+            "typeVersion": 1,
+            "position": [
+                6900,
+                -400
+            ],
+            "id": "edd97e4a-cb4b-405a-83ad-398c4a181103",
+            "name": "No Operation, do nothing"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "b6fa237b-dc76-4437-b767-73bef714ac4c",
+                            "name": "Compa\u00f1ia",
+                            "value": "={{ $json[\"Compa\u00f1ia\"] }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "fa806fb8-9a15-43a6-9237-586453b7efe7",
+                            "name": "Tipo de Assessment",
+                            "value": "={{ $json[\"Tipo de Assessment\"] }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "b3d5fd56-f55f-4072-b168-44c0b0b5c7e4",
+                            "name": "Tenant ID",
+                            "value": "={{ $json[\"Tenant ID\"] }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "cf8d57f9-3f93-4771-9d65-09efa6f6b82d",
+                            "name": "Client ID",
+                            "value": "={{ $json[\"Client ID\"] }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "eca6c040-820e-4b3f-9470-a1da6e1dc153",
+                            "name": "Client Secret",
+                            "value": "={{ $json[\"Client Secret\"] }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "36dc38e7-f070-4824-8bcd-22a1b8e3c38f",
+                            "name": "Subscription ID",
+                            "value": "={{ $json[\"Subscription ID\"] }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                3220,
+                -600
+            ],
+            "id": "d39f7cb7-7255-4e70-8809-f701bb724b40",
+            "name": "Edit Fields1"
+        },
+        {
+            "parameters": {
+                "options": {
+                    "numberOfItems": -1,
+                    "separator": "\\n"
+                }
+            },
+            "type": "@n8n/n8n-nodes-langchain.outputParserItemList",
+            "typeVersion": 1,
+            "position": [
+                5200,
+                -240
+            ],
+            "id": "1a8e4f3f-962d-473f-b90f-3521a41f9314",
+            "name": "Item List Output Parser"
+        },
+        {
+            "parameters": {
+                "model": "gemma2:2b",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmOllama",
+            "typeVersion": 1,
+            "position": [
+                5420,
+                -20
+            ],
+            "id": "81462789-7901-4098-b6fd-f2d7fb604e6e",
+            "name": "Gemma 2b",
+            "credentials": {
+                "ollamaApi": {
+                    "id": "xxxxxxxxxxxxx",
+                    "name": "Ollama account 3"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "model": "gpt-3.5-turbo",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                5000,
+                -20
+            ],
+            "id": "0d55a6eb-97e3-4c78-97de-831c19c06b60",
+            "name": "3.5 Turbo",
+            "credentials": {
+                "openAiApi": {
+                    "id": "xxxxxxxxxxxxxx",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                5140,
+                -20
+            ],
+            "id": "001db5ee-7429-4962-a891-60128c3f544d",
+            "name": "4o-mini",
+            "credentials": {
+                "openAiApi": {
+                    "id": "RGm0dYffoQilBasQ",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "model": "o1-mini",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                5280,
+                -20
+            ],
+            "id": "869fde5c-b1f5-48d8-bc07-4c46a0139419",
+            "name": "O1-mini",
+            "credentials": {
+                "openAiApi": {
+                    "id": "xxxxxxxxxxxxx",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "command": "python3 azure_analyzer.py",
+                "cwd": "/mnt/"
+            },
+            "type": "n8n-nodes-base.ssh",
+            "typeVersion": 1,
+            "position": [
+                3420,
+                -600
+            ],
+            "id": "cbee5c27-66b5-466a-9f6b-7633d299261b",
+            "name": "Infrastructura",
+            "credentials": {
+                "sshPassword": {
+                    "id": "xxxxxxxxxx",
+                    "name": "SSH Password account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "command": "./azure_cost.sh > costes.txt",
+                "cwd": "/mnt/"
+            },
+            "type": "n8n-nodes-base.ssh",
+            "typeVersion": 1,
+            "position": [
+                3640,
+                -600
+            ],
+            "id": "11dc14c0-574e-4cbb-b755-52b38f2eafd6",
+            "name": "Costes",
+            "credentials": {
+                "sshPassword": {
+                    "id": "xxxxxxxxxx",
+                    "name": "SSH Password account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "file",
+                "operation": "download",
+                "path": "/mnt/costes.txt",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.ssh",
+            "typeVersion": 1,
+            "position": [
+                4340,
+                -600
+            ],
+            "id": "0792944f-98d8-4ed3-a69c-403e07e3ce5c",
+            "name": "SSH",
+            "credentials": {
+                "sshPassword": {
+                    "id": "xxxxxxxxxx",
+                    "name": "SSH Password account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "text",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.extractFromFile",
+            "typeVersion": 1,
+            "position": [
+                4560,
+                -600
+            ],
+            "id": "7dbceeeb-21b7-4475-b0ed-025c984ec6a4",
+            "name": "Extract from File1"
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "Basic LLM Chain": {
+            "main": [
+                [
+                    {
+                        "node": "Split Out",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract from File": {
+            "main": [
+                [
+                    {
+                        "node": "SSH",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Edit Fields": {
+            "main": [
+                [
+                    {
+                        "node": "Basic LLM Chain1",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Basic LLM Chain",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "HTML": {
+            "main": [
+                [
+                    {
+                        "node": "Convert to File",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Convert to File": {
+            "main": [
+                [
+                    {
+                        "node": "SSH2",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "SSH2": {
+            "main": [
+                [
+                    {
+                        "node": "SSH5",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "SSH5": {
+            "main": [
+                [
+                    {
+                        "node": "No Operation, do nothing",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "SSH1": {
+            "main": [
+                [
+                    {
+                        "node": "Extract from File",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Out": {
+            "main": [
+                [
+                    {
+                        "node": "SSH6",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "SSH6": {
+            "main": [
+                [
+                    {
+                        "node": "No Operation, do nothing",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Basic LLM Chain1": {
+            "main": [
+                [
+                    {
+                        "node": "HTML",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "On form submission": {
+            "main": [
+                [
+                    {
+                        "node": "Edit Fields1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Edit Fields1": {
+            "main": [
+                [
+                    {
+                        "node": "Infrastructura",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Item List Output Parser": {
+            "ai_outputParser": [
+                [
+                    {
+                        "node": "Basic LLM Chain",
+                        "type": "ai_outputParser",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gemma 2b": {
+            "ai_languageModel": [
+                []
+            ]
+        },
+        "3.5 Turbo": {
+            "ai_languageModel": [
+                []
+            ]
+        },
+        "O1-mini": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "Basic LLM Chain1",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "4o-mini": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "Basic LLM Chain",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Infrastructura": {
+            "main": [
+                [
+                    {
+                        "node": "Costes",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Costes": {
+            "main": [
+                [
+                    {
+                        "node": "SSH1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "SSH": {
+            "main": [
+                [
+                    {
+                        "node": "Extract from File1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract from File1": {
+            "main": [
+                [
+                    {
+                        "node": "Edit Fields",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "versionId": "2bb7afb5-705f-48b2-bd9f-44f0121ee1af",
+    "meta": {
+        "instanceId": "ANONYMIZED_VALUE"
+    },
+    "id": "ANONYMIZED_VALUE",
+    "tags": []
+}
